@@ -4,13 +4,22 @@ window.onload = function () {
   const slides = [...slider.querySelectorAll(".js-slide")];
   const next = slider.querySelector(".js-next");
   const prev = slider.querySelector(".js-prev");
-  let shift = 0;
+  const transitionTime = 300;
+  let shift = slides[0].offsetWidth;
   let index = 0;
   let newArray;
   let dots;
 
+  // Clone first and last elements and insert them
+  const firstSlideClone = slides[0].cloneNode(true);
+  const lastSlideClone = slides[slides.length - 1].cloneNode(true);
+  firstSlideClone.classList.add("slider__slide--cloned", "active");
+  lastSlideClone.classList.add("slider__slide--cloned", "active");
+  sliderWrapper.appendChild(firstSlideClone); // after
+  sliderWrapper.insertBefore(lastSlideClone, slides[0]); //before
+
   // Dots initialization
-  for (slide in slides) {
+  for (let i = 0; i <= slides.length - 1; i++) {
     const paginationWrap = slider.querySelector(".js-pagination");
     const elDiv = document.createElement("div");
 
@@ -37,21 +46,33 @@ window.onload = function () {
   function updateWrapperWidth() {
     sliderWrapper.style.maxWidth = slides[index].offsetWidth + "px";
     sliderWrapper.style.width = slides[index].offsetWidth + "px";
+    sliderWrapper.style.transform = `translateX(-${shift}px)`;
+
   }
 
-  // Next button handler
   next.addEventListener("click", function () {
-    if (index + 1 <= slides.length - 1) {
+    sliderWrapper.style.transition = "";
+    sliderWrapper.style.setProperty('--transitionTime', `${transitionTime}ms`);
+
+    if (!(index == slides.length - 1)) {
       index++;
-      updateActiveClass();
-      updateWrapperWidth();
-
       shift += slides[index - 1].offsetWidth;
-      sliderWrapper.style.transform = `translateX(-${shift}px)`;
-
     } else {
-      event.preventDefault();
+      index = 0;
+      shift += slides[0].offsetWidth;
+      next.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        sliderWrapper.style.transition = "none";
+        next.style.pointerEvents = "unset";
+        shift = slides[0].offsetWidth;
+        sliderWrapper.style.transform = `translateX(-${shift}px)`;
+      }, transitionTime);
     }
+
+    sliderWrapper.style.transform = `translateX(-${shift}px)`;
+    updateActiveClass();
+    updateWrapperWidth();
   });
 
   // Prev button handler
@@ -70,7 +91,6 @@ window.onload = function () {
 
   // Dots managing
   dots.forEach((el) => el.addEventListener("click", function () {
-    shift = 0;
     index = dots.indexOf(el);
 
     if (!(el == dots[0])) {
@@ -89,18 +109,6 @@ window.onload = function () {
   // Copies of elements for loop slider
   newArray = [slides.length].concat(slides);
   newArray.push(slides[0]);
-
-  // Отримати посилання на цільовий елемент, перед яким потрібно вставити копію
-  let targetElementFirst = slides[0];
-  let targetElementLast = slides[slides.length - 1];
-
-  // Скопіювати розмітку елементу
-  let copiedElementFirst = targetElementFirst.cloneNode(true);
-  let copiedElementLast = targetElementLast.cloneNode(true);
-
-  // Вставити копію перед цільовим елементом за допомогою insertBefore()
-  targetElementFirst.parentNode.insertBefore(copiedElementLast, targetElementFirst);
-  targetElementLast.parentNode.insertBefore(copiedElementFirst, targetElementLast.nextSibling);
 
   // Functions calls
   updateActiveClass();
