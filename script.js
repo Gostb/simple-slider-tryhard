@@ -7,8 +7,9 @@ window.onload = function () {
   const transitionTime = 300;
   let shift = slides[0].offsetWidth;
   let index = 0;
-  let newArray;
   let dots;
+
+
 
   // Clone first and last elements and insert them
   const firstSlideClone = slides[0].cloneNode(true);
@@ -46,8 +47,6 @@ window.onload = function () {
   function updateWrapperWidth() {
     sliderWrapper.style.maxWidth = slides[index].offsetWidth + "px";
     sliderWrapper.style.width = slides[index].offsetWidth + "px";
-    sliderWrapper.style.transform = `translateX(-${shift}px)`;
-
   }
 
   next.addEventListener("click", function () {
@@ -57,6 +56,7 @@ window.onload = function () {
     if (!(index == slides.length - 1)) {
       index++;
       shift += slides[index - 1].offsetWidth;
+      console.log(shift);
     } else {
       index = 0;
       shift += slides[0].offsetWidth;
@@ -106,9 +106,9 @@ window.onload = function () {
     updateWrapperWidth();
   }));
 
-  // Copies of elements for loop slider
-  newArray = [slides.length].concat(slides);
-  newArray.push(slides[0]);
+  if (sliderWrapper) {
+    sliderWrapper.style.transform = `translateX(-${slides[0].offsetWidth}px)`;
+  }
 
   // Functions calls
   updateActiveClass();
