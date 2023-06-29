@@ -83,7 +83,6 @@ document.addEventListener("DOMContentLoaded", function () {
       index = slides.length - 1;
       shift -= slides[slides.length - 1].offsetWidth;
       prev.style.pointerEvents = "none";
-      console.log(shift);
       setTimeout(() => {
         sliderWrapper.style.transition = "none";
         prev.style.pointerEvents = "";
@@ -112,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
       shift = slides[0].offsetWidth;
       for (let j = 0; j <= index - 1; j++) {
         shift += slides[j].offsetWidth;
-        console.log(index, shift);
       }
     }
 
