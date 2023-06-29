@@ -1,15 +1,13 @@
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
   const slider = document.querySelector("#slider");
   const sliderWrapper = slider.querySelector(".js-wrapper");
   const slides = [...slider.querySelectorAll(".js-slide")];
   const next = slider.querySelector(".js-next");
   const prev = slider.querySelector(".js-prev");
   const transitionTime = 300;
-  let shift = slides[0].offsetWidth;
   let index = 0;
   let dots;
-
-
+  let shift;
 
   // Clone first and last elements and insert them
   const firstSlideClone = slides[0].cloneNode(true);
@@ -18,6 +16,8 @@ window.onload = function () {
   lastSlideClone.classList.add("slider__slide--cloned", "active");
   sliderWrapper.appendChild(firstSlideClone); // after
   sliderWrapper.insertBefore(lastSlideClone, slides[0]); //before
+
+  shift = slides[0].offsetWidth;
 
   // Dots initialization
   for (let i = 0; i <= slides.length - 1; i++) {
@@ -56,7 +56,6 @@ window.onload = function () {
     if (!(index == slides.length - 1)) {
       index++;
       shift += slides[index - 1].offsetWidth;
-      console.log(shift);
     } else {
       index = 0;
       shift += slides[0].offsetWidth;
@@ -64,7 +63,7 @@ window.onload = function () {
 
       setTimeout(() => {
         sliderWrapper.style.transition = "none";
-        next.style.pointerEvents = "unset";
+        next.style.pointerEvents = "";
         shift = slides[0].offsetWidth;
         sliderWrapper.style.transform = `translateX(-${shift}px)`;
       }, transitionTime);
@@ -77,16 +76,30 @@ window.onload = function () {
 
   // Prev button handler
   prev.addEventListener("click", function () {
-    if (index >= 1) {
-      index--;
-      updateActiveClass();
-      updateWrapperWidth();
+    sliderWrapper.style.transition = "";
+    sliderWrapper.style.setProperty('--transitionTime', `${transitionTime}ms`);
 
-      shift -= slides[index].offsetWidth;
-      sliderWrapper.style.transform = `translateX(-${shift}px)`;
+    if (index == 0) {
+      index = slides.length - 1;
+      shift -= slides[slides.length - 1].offsetWidth;
+      prev.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        sliderWrapper.style.transition = "none";
+        prev.style.pointerEvents = "";
+        for (let i = 0; i < slides.length; i++) {
+          shift += slides[i].offsetWidth;
+        }
+        sliderWrapper.style.transform = `translateX(-${shift}px)`;
+      }, transitionTime);
     } else {
-      event.preventDefault();
+      index--;
+      shift -= slides[index].offsetWidth;
     }
+
+    sliderWrapper.style.transform = `translateX(-${shift}px)`;
+    updateActiveClass();
+    updateWrapperWidth();
   });
 
   // Dots managing
@@ -113,4 +126,4 @@ window.onload = function () {
   // Functions calls
   updateActiveClass();
   updateWrapperWidth();
-};
+});
