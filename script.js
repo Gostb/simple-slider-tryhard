@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let dots;
   let shift;
 
+  sliderWrapper.style.setProperty('--transitionTime', `${transitionTime}ms`);
+
   // Clone first and last elements and insert them
   const firstSlideClone = slides[0].cloneNode(true);
   const lastSlideClone = slides[slides.length - 1].cloneNode(true);
@@ -51,7 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   next.addEventListener("click", function () {
     sliderWrapper.style.transition = "";
-    sliderWrapper.style.setProperty('--transitionTime', `${transitionTime}ms`);
 
     if (!(index == slides.length - 1)) {
       index++;
@@ -77,13 +78,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Prev button handler
   prev.addEventListener("click", function () {
     sliderWrapper.style.transition = "";
-    sliderWrapper.style.setProperty('--transitionTime', `${transitionTime}ms`);
 
     if (index == 0) {
       index = slides.length - 1;
       shift -= slides[slides.length - 1].offsetWidth;
       prev.style.pointerEvents = "none";
-
+      console.log(shift);
       setTimeout(() => {
         sliderWrapper.style.transition = "none";
         prev.style.pointerEvents = "";
@@ -106,15 +106,17 @@ document.addEventListener("DOMContentLoaded", function () {
   dots.forEach((el) => el.addEventListener("click", function () {
     index = dots.indexOf(el);
 
-    if (!(el == dots[0])) {
+    if (el == dots[0]) {
+      shift = slides[0].offsetWidth;
+    } else {
+      shift = slides[0].offsetWidth;
       for (let j = 0; j <= index - 1; j++) {
         shift += slides[j].offsetWidth;
-        sliderWrapper.style.transform = `translateX(-${shift}px)`;
+        console.log(index, shift);
       }
-    } else {
-      sliderWrapper.style.transform = "translateX(0px)";
     }
 
+    sliderWrapper.style.transform = `translateX(-${shift}px)`;
     updateActiveClass();
     updateWrapperWidth();
   }));
