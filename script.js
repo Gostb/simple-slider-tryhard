@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Dots managing
   dots.forEach((el) => el.addEventListener("click", function () {
     index = dots.indexOf(el);
+    sliderWrapper.style.transition = "";
 
     if (el == dots[0]) {
       shift = slides[0].offsetWidth;
